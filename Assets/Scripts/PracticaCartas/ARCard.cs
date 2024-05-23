@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Vuforia;
 public class ARCard : MonoBehaviour
@@ -11,6 +12,15 @@ public class ARCard : MonoBehaviour
 
     public int ATK = 0;
     public int DEF = 0;
+    public TextMeshPro textoATK;
+    public TextMeshPro textoDEF;
+
+    public GameObject model;
+    public GameObject spriteDerrota;
+    public GameObject spriteDeferensa;
+    public GameObject botonDEF;
+    public GameObject botonATK;
+
 
     public GameObject indicadorJ1, indicadorJ2;
     // Start is called before the first frame update
