@@ -20,7 +20,5 @@ public class TextoSlider : MonoBehaviour
     {
         texto.text = slider.value.ToString();
     }
-
     
-   
 }

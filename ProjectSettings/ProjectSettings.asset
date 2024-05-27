@@ -13,8 +13,8 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: REALIDAD AUMENTADA
-  productName: P3_WaclAMole_Ivan
-  defaultCursor: {fileID: 2800000, guid: e091afb73633a214a9863a38761653a9, type: 3}
+  productName: Cartas_AR
+  defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
@@ -279,7 +279,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 06afc7fdf071c3b489329f0192af7d91, type: 3}
+      m_Icon: {fileID: 2800000, guid: b23546efb6625a24fbb992505c7d4127, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -847,11 +847,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 498cebc5-5c7e-4706-85ed-c064a93af53f
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: PracticaCartas
+  organizationId: ivan5677
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

@@ -4,190 +4,225 @@ using TMPro;
 using UnityEngine;
 using Vuforia;
 using UnityEngine.UI;
-using TMPro;
+using static ARCard;
+
 
 public class CardGameManager : MonoBehaviour
 {
-    public TextMeshPro TextoATK;
-    public TextMeshPro TextoDEF;
-    public VuforiaBehaviour prueba;
-
-    public ARCard carta;
-
-    private ARCard[] cartasEnEscena; // Lista de cartas en escena 
-    private List<ARCard> cartasTrackeadas; // Lista de cartas trackeadas 
-
-    public int nCartasTrackeadas = 0; // Cuenta de cuantas cartas han sido trackeadas 
-
-    public GameObject botonCombate; // Boton
+    [SerializeField] public ARCard[] cartasEnEscena;
+    [SerializeField] private List<ARCard> cartasTrackeadas;
 
 
-    private int nCartasDerrotadas;
 
-
-  
-
-
+    //Nº cartas traqueadas
+    public int nCartasTrackeadas = 0;
+    public GameObject botonCombate;
+    public GameObject botonReset;
     public Slider sliderJ1;
     public Slider sliderJ2;
-
-
-
-    public Transform PosJ1;
-    public Transform PosJ2;
-
+    public int vidaMaxima = 4000;
+    public Transform posJ1;
+    public Transform posJ2;
     private ARCard cartaJ1;
     private ARCard cartaJ2;
+    private int nCartasDerrotadas = 0;
+    public TextMeshProUGUI TextoVictoriaJ1;
+    public TextMeshProUGUI TextoVictoriaJ2;
+    public TextMeshProUGUI TextoEmpate;
 
-    //public int CartasEnEscena;
-
-
+    private bool gameOver = false;
+   
+    // Start is called before the first frame update
     void Start()
     {
-        //sliderJ1.value
-
+        
         cartasEnEscena = FindObjectsOfType<ARCard>();
 
-        prueba.SetMaximumSimultaneousTrackedImages(10);
+        TextoVictoriaJ1.gameObject.SetActive(false);
+        TextoVictoriaJ2.gameObject.SetActive(false); 
+        TextoEmpate.gameObject.SetActive(false);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //ActualizaListaCartas();
+        ActualizaListaCartas();
         CompruebaBotonCombate();
-        // CompruebaPropietarioCartas();
-        checkCartasTrackeadas();
-
+        CompruebaPropietarioCartas();
     }
 
-    private void checkCartasTrackeadas()
+    public void ResetGame()
     {
-        nCartasTrackeadas = 0;
-        cartasTrackeadas.Clear();
-        
-        foreach(ARCard carta in cartasEnEscena) 
+        //Reseteamos todas las cartas
+        foreach (ARCard card in cartasEnEscena)
         {
-          if(carta.GetStatus() != Status.NO_POSE)
-            {
-                nCartasTrackeadas++;
-                cartasTrackeadas.Add(carta);
-            }    
-        
+            card.ResetCarta();
+            TextoVictoriaJ1.gameObject.SetActive(false);
+            TextoVictoriaJ2.gameObject.SetActive(false);
+            TextoEmpate.gameObject.SetActive(false);
         }
+        //Reset cartas destruidas
+        nCartasDerrotadas = 0;
+        //Reset a la vida de cada Jugador
+        sliderJ1.maxValue = sliderJ1.value = vidaMaxima;
+        sliderJ2.maxValue = sliderJ2.value = vidaMaxima;
+
+       
     }
-
-
- 
 
     public void Combate()
     {
-        /*
+        ARCard cartaJ1 = cartasTrackeadas[0];
+        ARCard cartaJ2 = cartasTrackeadas[1];
+        //Cogemos las 2 primeras cartas traqueadas
+        //Obtendremos sus estadisticas (ATK si está en ataque, DEF si está en defensa)
         int statJ1 = cartaJ1.GetCardStat();
-       
         int statJ2 = cartaJ2.GetCardStat();
 
-        if(statJ1 > statJ2) 
+        //Comparamos las dos estadísticas 
+        //Si gana un jugador, el otro pierde la diferencia de estadísstica en vida 
+        //La carta que pierde se destruye 
+        //Si hay empate, se destruyen las dos
+        if (statJ1 > statJ2) //Gana J1
         {
-            cartaJ2.PonEstado(ARCard.CardPose.DESTROYED);
+            //Destruimos carta J2
+            cartaJ2.PonEstado(CardPose.DESTROYED);
+            nCartasDerrotadas++;
+            //Restar vida a J2
             sliderJ2.value -= statJ1 - statJ2;
-            nCartasDerrotadas++;
         }
-
-        else if (statJ2 > statJ1)
-        
+        else if (statJ2 > statJ1) //Gana J2
         {
-            cartaJ1.PonEstado(ARCard.CardPose.DESTROYED);
+            //Restar vida a J1
+            cartaJ1.PonEstado(CardPose.DESTROYED);
+            nCartasDerrotadas++;
+            //Restar vida a J2
             sliderJ1.value -= statJ2 - statJ1;
-            nCartasDerrotadas++;
         }
-
-        else
+        else //Empatan
         {
-            cartaJ1.PonEstado(ARCard.CardPose.DESTROYED);
-            cartaJ2.PonEstado(ARCard.CardPose.DESTROYED);
-            nCartasDerrotadas+= 2;
-        }*/
-
+            cartaJ1.PonEstado(CardPose.DESTROYED);
+            cartaJ2.PonEstado(CardPose.DESTROYED);
+            nCartasDerrotadas += 2;
+        }
         CheckGameOver();
     }
-
-    private void CompruebaBotonCombate() // CheckBotonCombate
-    {
-        if(nCartasTrackeadas >= 2) // Si hay 2 o mas cartas trackeadas, comprobamos estadados
-        {
-            botonCombate.SetActive(true);
-        }
-
-        else { botonCombate.SetActive(false);}
-    }
-
     private void CompruebaPropietarioCartas()
     {
-        /*
-        if(nCartasTrackeadas >= 2)
+        if (nCartasTrackeadas >= 2)
         {
-            Transform posC1 = CartasTrackeadas[0].transform; // Posicion carta numero 1
-            Transform posC2 = CartasTrackeadas[1].transform; // Posicion carta numero 2
+            Transform posC1 = cartasTrackeadas[0].transform; // posición carta nº 1 
+            Transform posC2 = cartasTrackeadas[1].transform; // posición carta nº 2 
 
-            // Calculamos distancias entre cada jugador y las dos cartas
+            float dist_J1_C1 = Vector3.Distance(posJ1.position, posC1.position);
+            float dist_J1_C2 = Vector3.Distance(posJ1.position, posC2.position);
 
-            float dist_J1_C1 = Vector3.Distance(PosJ1.position, posC1.position);
-            float dist_J1_C2 = Vector3.Distance(PosJ1.position, posC2.position);
+            float dist_J2_C1 = Vector3.Distance(posJ2.position, posC1.position);
+            float dist_J2_C2 = Vector3.Distance(posJ2.position, posC2.position);
 
-            float dist_J2_C1 = Vector3.Distance(PosJ2.position, posC1.position);
-            float dist_J2_C2 = Vector3.Distance(PosJ2.position, posC2.position);
-
-            if (dist_J1_C1 > dist_J1_C2)
+            if (dist_J1_C1 < dist_J1_C2)
             {
-                cartaJ1 = CartasTrackeadas[0];
-                cartaJ2 = CartasTrackeadas[1];
+                cartaJ1 = cartasTrackeadas[0]; // C1 es de J1
+                cartaJ2 = cartasTrackeadas[1]; // C2 es de J2
+
             }
             else
             {
-                cartaJ1 = CartasTrackeadas[1];
-                cartaJ2 = CartasTrackeadas[0];
+                cartaJ1 = cartasTrackeadas[1]; // C2 es de J1
+                cartaJ2 = cartasTrackeadas[0]; // C1 es de J2
             }
-
-            cartaJ1.AsignaPropietario(false);
-            cartaJ2.AsignaPropietario(true);
-
-
-            if (dist_J2_C1 < dist_J2_C2) ;
-            else;
-
-            
-
-            
-        }*/
+            cartaJ1.AsignaPropietario(true);
+            cartaJ2.AsignaPropietario(false);
+        }
     }
 
+    public void CompruebaBotonCombate()
+    {
+        // Si hay dos o mas cartas traqueadas, activamos botón combate 
+        if (nCartasTrackeadas >= 2) // Si hay dos o más cartas traqueadas, activamos botón combate
+        {
+            ARCard carta1 = cartasTrackeadas[0];
+            ARCard carta2 = cartasTrackeadas[1];
+
+            // Si las dos cartas están en ataque o  en defensa, activamos botón combate 
+            if ((carta1.estado == CardPose.ATTACK || carta1.estado == CardPose.DEFENSE) &&
+               (carta2.estado == CardPose.ATTACK || carta2.estado == CardPose.DEFENSE))
+            {
+                botonCombate.SetActive(true);
+            }
+            //else 
+            //botonCombate.SetActive(false);
+            //botonReset.SetActive(false);
+
+
+        }
+        else
+        {
+            botonCombate.SetActive(false);
+        }
+
+    }
+    private void ActualizaListaCartas()
+    {
+        //Vacia la lista de cartas traqueadas
+        cartasTrackeadas.Clear();
+        nCartasTrackeadas = 0;
+
+        foreach (ARCard carta in cartasEnEscena)
+        {
+            if (carta.GetStatus() != Vuforia.Status.NO_POSE)
+            {
+                cartasTrackeadas.Add(carta);
+                nCartasTrackeadas++;
+            }
+        }
+    }
     private void CheckGameOver()
     {
-        if(sliderJ1.value <= 0)
+        if (sliderJ1.value <= 0) // Pierde J2
         {
+           
+            TextoVictoriaJ1.gameObject.SetActive(true);
+            botonReset.SetActive(true);
+            gameOver = true;
+
 
         }
-
-        else if (sliderJ2.value <= 0)
+        else if (sliderJ2.value <= 0) // Pierde J1
         {
-             
+            
+            TextoVictoriaJ2.gameObject.SetActive(true);
+            botonReset.SetActive(true);
+            gameOver = true;
+
         }
-
-        if(nCartasDerrotadas >= cartasEnEscena.Length-1)
+        else if (nCartasDerrotadas >= cartasEnEscena.Length - 1)
         {
-            //Gana el que tenga mas vida
+            // Gana el que tenga más vida
             if (sliderJ1.value > sliderJ2.value)
             {
-                // Gana J2
-            }
+               
+                TextoVictoriaJ1.gameObject.SetActive(true);
+                botonReset.SetActive(true);
+                gameOver = true;
 
+
+            }
             else if (sliderJ2.value > sliderJ1.value)
             {
-                // Gana J1
+                
+                TextoVictoriaJ2.gameObject.SetActive(true);
+                botonReset.SetActive(true);
+                gameOver = true;
             }
-
-            else; // Empatan
+            else //empatan
+            {
+              
+                TextoEmpate.gameObject.SetActive(true);
+                botonReset.SetActive(true);
+                gameOver = true;
+            }
         }
     }
 }
