@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig>
   <Tracking>
+    <ImageTarget name="carta4" size="2.000000 2.818965" />
+    <ImageTarget name="carta3" size="2.000000 2.780899" />
     <ImageTarget name="cartaj2" size="2.000000 3.647416" />
     <ImageTarget name="cartaj1" size="2.000000 3.647416" />
     <ImageTarget name="carta_atras2" size="2.000000 3.576119" />

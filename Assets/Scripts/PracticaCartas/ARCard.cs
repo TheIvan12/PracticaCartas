@@ -128,7 +128,7 @@ public class ARCard : MonoBehaviour
     {
         indicadorJ1.SetActive(j1);
         indicadorJ2.SetActive(!j1);
-
+        /*
         if (j1 == true)
         {
             indicadorJ1.SetActive(true);
@@ -139,7 +139,7 @@ public class ARCard : MonoBehaviour
         {
             indicadorJ1.SetActive(false);
             indicadorJ2.SetActive(true);
-        }
+        }*/
     }
 
 

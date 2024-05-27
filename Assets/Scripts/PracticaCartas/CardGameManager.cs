@@ -73,8 +73,6 @@ public class CardGameManager : MonoBehaviour
 
     public void Combate()
     {
-        ARCard cartaJ1 = cartasTrackeadas[0];
-        ARCard cartaJ2 = cartasTrackeadas[1];
         //Cogemos las 2 primeras cartas traqueadas
         //Obtendremos sus estadisticas (ATK si está en ataque, DEF si está en defensa)
         int statJ1 = cartaJ1.GetCardStat();
@@ -151,9 +149,9 @@ public class CardGameManager : MonoBehaviour
             {
                 botonCombate.SetActive(true);
             }
-            //else 
-            //botonCombate.SetActive(false);
+            else  botonCombate.SetActive(false);
             //botonReset.SetActive(false);
+
 
 
         }
@@ -180,19 +178,19 @@ public class CardGameManager : MonoBehaviour
     }
     private void CheckGameOver()
     {
-        if (sliderJ1.value <= 0) // Pierde J2
+        if (sliderJ1.value <= 0) // Pierde J1
         {
            
-            TextoVictoriaJ1.gameObject.SetActive(true);
+            TextoVictoriaJ2.gameObject.SetActive(true);
             botonReset.SetActive(true);
             gameOver = true;
 
 
         }
-        else if (sliderJ2.value <= 0) // Pierde J1
+        else if (sliderJ2.value <= 0) // Pierde J2
         {
             
-            TextoVictoriaJ2.gameObject.SetActive(true);
+            TextoVictoriaJ1.gameObject.SetActive(true);
             botonReset.SetActive(true);
             gameOver = true;
 
